@@ -1,0 +1,33 @@
+{
+  "asset": {
+    "version": "1.1",
+    "generator": "Datum3D OpenSource Pipeline",
+    "tilesetVersion": "1.0.0"
+  },
+  "geometricError": 1000.0,
+  "root": {
+    "boundingVolume": {
+      "sphere": [3122075.859, 3712758.271, 4127148.460, 2000.0]
+    },
+    "geometricError": 500.0,
+    "refine": "ADD",
+    "children": [
+      {
+        "boundingVolume": {
+          "sphere": [0, 0, 45, 135.0]
+        },
+        "geometricError": 10.0,
+        "refine": "ADD",
+        "transform": [
+          -0.7653637434113925, 0.6435979647818195, 0.0, 0.0,
+          -0.4186729783391766, -0.4978839827057216, 0.7594896161065614, 0.0,
+          0.48880597119910835, 0.5812858156653993, 0.6505194255564609, 0.0,
+          3122075.8591035483, 3712758.270682043, 4127148.4600334275, 1.0
+        ],
+        "content": {
+          "uri": "Skypark_compressed.glb"
+        }
+      }
+    ]
+  }
+}

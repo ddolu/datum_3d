@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Datum 3D — Open Source 3D Viewer</title>
+
+  <!-- CesiumJS from CDN (no Ion required) -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay">
+    <div class="loader-content">
+      <div class="spinner"></div>
+      <h2>Datum 3D</h2>
+      <p id="loading-status">Initializing viewer...</p>
+    </div>
+  </div>
+
+  <!-- CesiumJS container -->
+  <div id="cesiumContainer"></div>
+
+  <!-- Info panel -->
+  <div id="info-panel">
+    <div class="panel-header">
+      <h3>Datum 3D</h3>
+      <button id="panel-toggle" title="Toggle panel">▼</button>
+    </div>
+    <div class="panel-body" id="panel-body">
+      <div class="info-row">
+        <span class="label">Tiles loaded:</span>
+        <span id="tile-count">0</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Camera height:</span>
+        <span id="camera-height">—</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Position:</span>
+        <span id="camera-position">—</span>
+      </div>
+      <hr />
+      <div class="controls">
+        <button id="btn-zoom-model" title="Fly to 3D model">🎯 Zoom to Model</button>
+        <button id="btn-toggle-terrain" title="Toggle terrain">🏔️ Terrain</button>
+        <button id="btn-toggle-wireframe" title="Toggle wireframe">🔲 Wireframe</button>
+        <button id="btn-toggle-shadows" title="Toggle shadows">☀️ Shadows</button>
+      </div>
+      <hr />
+      <div class="tileset-list" id="tileset-list">
+        <p class="subtle">No tilesets loaded yet</p>
+      </div>
+      <hr />
+      <div class="height-adjust">
+        <label for="height-offset">Height offset (m):</label>
+        <input type="range" id="height-offset" min="-200" max="200" value="0" step="1" />
+        <span id="height-offset-value">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coordinate display -->
+  <div id="coords-display">
+    <span id="mouse-coords">Move mouse over globe</span>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
