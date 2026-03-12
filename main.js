@@ -49,6 +49,142 @@ const CONFIG = {
 };
 
 
+// === 3D Layer Groups (ArcGIS Pro style) =====================================
+// Keep the 9 top-level groups in the same order/names as the screenshots.
+// `uri` must match the `content.uri` entries in tiles/tileset.json.
+const LAYER_GROUPS = [
+  {
+    id: 'caspian_dream',
+    name: 'Caspian Dream',
+    items: [
+      { uri: 'testcaspian_Import3D_Project_CopyFeatures.glb' },
+      // Extra small ground file found in tileset.json (kept here so it is controllable)
+      { uri: 'yer_Import3DFiles.glb', defaultVisible: false },
+    ],
+  },
+  {
+    id: 'premium_residence',
+    name: 'Premium Residence',
+    items: [
+      { uri: 'prland_Import3DFiles1.glb' },
+      { uri: 'prbina1_Import3DFiles.glb' },
+      { uri: 'prbina2_Import3DFiles.glb' },
+      { uri: 'test_Import3DFiles.glb' },
+    ],
+  },
+  {
+    id: 'casino',
+    name: 'Casino',
+    items: [
+      { uri: 'casino_Import3DFiles_Project_CopyFeatures.glb' },
+      { uri: 'rixos_Import3DFiles_Project_CopyFeatures.glb' },
+      { uri: 'casino_land_Import3D_Project_CopyFeatures.glb' },
+    ],
+  },
+  {
+    id: 'arabian_ranches',
+    name: 'Arabian Ranches',
+    items: [
+      { uri: 'arabian_area_Import3DFiles.glb' },
+      { uri: 'Arabian_b1_Import3DFiles.glb' },
+      { uri: 'Arabian_B2_Import3DFiles.glb' },
+      { uri: 'Arabian_b3_Import3DFiles.glb' },
+      { uri: 'Arabian_b4_Import3DFiles.glb' },
+      { uri: 'Arabian_b5_Import3DFiles.glb' },
+      { uri: 'Arabian_b6_Import3DFiles.glb' },
+      { uri: 'Arabian_b7_Import3DFiles.glb' },
+      { uri: 'Arabian_b7_1_Import3DFiles.glb' },
+      { uri: 'Arabian_b7_2_Import3DFiles.glb' },
+      { uri: 'Arabian_b7_3_Import3DFiles.glb' },
+      { uri: 'Arabian_b8_Import3DFiles.glb' },
+      { uri: 'Arabian_b9_Import3DFiles.glb' },
+      { uri: 'Arabian_b10_Import3DFiles.glb' },
+    ],
+  },
+  {
+    id: 'skypark',
+    name: 'Skypark',
+    items: [
+      { uri: 'Skypark_Import3DFile_Project.glb' },
+      { uri: 'Skymall_Import3DFile_Project.glb' },
+      // Extra version present in tileset.json; default hidden to avoid double-rendering.
+      { uri: 'Skypark_compressed.glb', defaultVisible: false },
+    ],
+  },
+  {
+    id: 'digital',
+    name: 'Digital',
+    items: [
+      { uri: 'Digital_land_Import3DFiles.glb' },
+    ],
+  },
+  {
+    id: 'monaco',
+    name: 'Monaco',
+    items: [
+      { uri: 'Monaco_landsca_Import3DFiles.glb' },
+      { uri: 'Monaco_B1_Import3DFiles.glb' },
+      { uri: 'Monaco_B1_Import3DFiles1.glb' },
+      { uri: 'Monaco_B1_Import3DFiles2.glb' },
+      { uri: 'Monaco_B4_Import3DFiles.glb' },
+      { uri: 'Monaco_B4_Import3DFiles1.glb' },
+      { uri: 'Monaco_B4_Import3DFiles2.glb' },
+    ],
+  },
+  {
+    id: 'harbor',
+    name: 'Harbor',
+    items: [
+      { uri: 'THREE_PLAN_Import3DFiles.glb' },
+    ],
+  },
+  {
+    id: 'paradise_prime_2',
+    name: 'Paradise_Prime_2',
+    items: [
+      { uri: 'Paradise_Import3DFiles.glb' },
+      { uri: 'paradise_b2_Import3DFiles.glb' },
+      { uri: 'Paradise_area_Import3DFiles.glb' },
+      { uri: 'prime_resd_Import3DFiles.glb' },
+      { uri: 'prime_resd_Import3DFiles1.glb' },
+      { uri: 'prime_resd1_Import3DFiles.glb' },
+      { uri: 'prime_resd1_Import3DFiles1.glb' },
+    ],
+  },
+];
+
+function basenameUri(uri) {
+  if (!uri) return '';
+  const s = String(uri);
+  const idx = Math.max(s.lastIndexOf('/'), s.lastIndexOf('\\'));
+  return idx >= 0 ? s.slice(idx + 1) : s;
+}
+
+function labelFromUri(uri) {
+  const base = basenameUri(uri);
+  return base.toLowerCase().endsWith('.glb') ? base.slice(0, -4) : base;
+}
+
+function safeToggleShow(obj, visible) {
+  // Attempt the common .show paths without hard-coding a single Cesium internal type.
+  try { if (obj && 'show' in obj) obj.show = !!visible; } catch (_) { /* ignore */ }
+  try { if (obj && obj.model && 'show' in obj.model) obj.model.show = !!visible; } catch (_) { /* ignore */ }
+  try { if (obj && obj._model && 'show' in obj._model) obj._model.show = !!visible; } catch (_) { /* ignore */ }
+}
+
+function flyToBoundingSphere(viewer, sphere) {
+  if (!viewer || !sphere) return;
+  const range = Math.max(30, sphere.radius * 2.5);
+  viewer.camera.flyToBoundingSphere(sphere, {
+    duration: 2.0,
+    offset: new Cesium.HeadingPitchRange(
+      Cesium.Math.toRadians(0),
+      Cesium.Math.toRadians(-45),
+      range
+    ),
+  });
+}
+
 // â”€â”€â”€ Initialize Viewer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function setLoadingStatus(msg) {
@@ -216,6 +352,371 @@ async function loadTileset(viewer, url) {
 }
 
 
+// === Layer Tree Controller ==================================================
+
+async function buildTilesetUriIndex(tileset, tilesetUrl) {
+  // Map `content.uri` -> Cesium3DTile by reading tileset.json and matching root
+  // children by index (our tileset is a 1-level list: root.children).
+  const tileByUri = new Map();
+  const uriByTile = new Map();
+
+  if (!tileset || !tileset.root) return { tileByUri, uriByTile };
+
+  try {
+    const resp = await fetch(tilesetUrl, { cache: 'no-store' });
+    if (!resp.ok) throw new Error(`fetch ${tilesetUrl} failed: ${resp.status}`);
+    const json = await resp.json();
+
+    const jsonChildren = (json && json.root && json.root.children) ? json.root.children : [];
+    const tileChildren = tileset.root.children || [];
+    const n = Math.min(jsonChildren.length, tileChildren.length);
+
+    for (let i = 0; i < n; i++) {
+      const uri = basenameUri(jsonChildren[i] && jsonChildren[i].content && jsonChildren[i].content.uri);
+      if (!uri) continue;
+      const tile = tileChildren[i];
+      if (!tile) continue;
+      tileByUri.set(uri, tile);
+      uriByTile.set(tile, uri);
+    }
+  } catch (e) {
+    console.warn('Failed to build tileset uri index:', e);
+  }
+
+  return { tileByUri, uriByTile };
+}
+
+function computeGroupSphere(group, tileByUri) {
+  const spheres = [];
+  for (const item of group.items) {
+    const uri = basenameUri(item.uri);
+    const tile = tileByUri.get(uri);
+    if (tile && tile.boundingSphere) spheres.push(tile.boundingSphere);
+  }
+  if (spheres.length === 0) return null;
+  if (spheres.length === 1) return spheres[0];
+
+  let acc = Cesium.BoundingSphere.clone(spheres[0], new Cesium.BoundingSphere());
+  for (let i = 1; i < spheres.length; i++) {
+    acc = Cesium.BoundingSphere.union(acc, spheres[i], new Cesium.BoundingSphere());
+  }
+  return acc;
+}
+
+function createLayerContextMenu(onAction) {
+  let menu = document.getElementById('layer-context-menu');
+  if (!menu) {
+    menu = document.createElement('div');
+    menu.id = 'layer-context-menu';
+    menu.className = 'layer-context-menu hidden';
+    menu.innerHTML = `
+      <button type="button" data-action="zoom">Zoom to Model</button>
+      <button type="button" data-action="toggle">Show/Hide</button>
+    `;
+    document.body.appendChild(menu);
+  }
+
+  function hide() {
+    menu.classList.add('hidden');
+    menu.style.left = '-9999px';
+    menu.style.top = '-9999px';
+    menu.dataset.nodeType = '';
+    menu.dataset.groupId = '';
+    menu.dataset.uri = '';
+  }
+
+  function show(x, y, node) {
+    menu.dataset.nodeType = node && node.type ? node.type : '';
+    menu.dataset.groupId = node && node.groupId ? node.groupId : '';
+    menu.dataset.uri = node && node.uri ? node.uri : '';
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
+    menu.classList.remove('hidden');
+  }
+
+  menu.addEventListener('click', (e) => {
+    const btn = e.target && e.target.closest ? e.target.closest('button[data-action]') : null;
+    if (!btn) return;
+    const action = btn.dataset.action;
+    const node = {
+      type: menu.dataset.nodeType,
+      groupId: menu.dataset.groupId,
+      uri: menu.dataset.uri,
+    };
+    hide();
+    if (onAction) onAction(action, node);
+  });
+
+  // Hide on outside click / escape
+  document.addEventListener('click', (e) => {
+    if (!menu.classList.contains('hidden') && !menu.contains(e.target)) hide();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hide();
+  });
+
+  return { show, hide };
+}
+
+async function setupLayerTree(viewer, tileset) {
+  const host = document.getElementById('tileset-list');
+  if (!host) return null;
+
+  host.innerHTML = '';
+
+  const tree = document.createElement('div');
+  tree.className = 'layer-tree';
+
+  const header = document.createElement('div');
+  header.className = 'layer-tree-header';
+  header.textContent = '3D Layers';
+  tree.appendChild(header);
+
+  host.appendChild(tree);
+
+  const selected = { node: null };
+
+  const { tileByUri, uriByTile } = await buildTilesetUriIndex(tileset, CONFIG.tilesetUrl);
+
+  // Visibility state
+  const visibleByUri = new Map();
+  for (const group of LAYER_GROUPS) {
+    for (const item of group.items) {
+      const uri = basenameUri(item.uri);
+      const def = item.defaultVisible;
+      visibleByUri.set(uri, def === undefined ? true : !!def);
+    }
+  }
+
+  function selectNode(node, rowEl) {
+    selected.node = node;
+    tree.querySelectorAll('.layer-row.selected').forEach(el => el.classList.remove('selected'));
+    if (rowEl) rowEl.classList.add('selected');
+  }
+
+  function applyVisibilityToUri(uri, visible) {
+    const u = basenameUri(uri);
+    visibleByUri.set(u, !!visible);
+    const tile = tileByUri.get(u);
+    if (tile) {
+      safeToggleShow(tile, !!visible);
+      safeToggleShow(tile.content, !!visible);
+    }
+  }
+
+  // Apply visibility when a tile content loads/turns visible
+  if (tileset) {
+    tileset.tileLoad.addEventListener((tile) => {
+      const uri = uriByTile.get(tile);
+      if (!uri) return;
+      const visible = visibleByUri.get(uri);
+      if (visible === false) safeToggleShow(tile && tile.content ? tile.content : null, false);
+    });
+    tileset.tileVisible.addEventListener((tile) => {
+      const uri = uriByTile.get(tile);
+      if (!uri) return;
+      const visible = visibleByUri.get(uri);
+      if (visible === false) safeToggleShow(tile && tile.content ? tile.content : null, false);
+    });
+  }
+
+  function updateGroupCheckboxState(groupId) {
+    const group = LAYER_GROUPS.find(g => g.id === groupId);
+    if (!group) return;
+    const cb = tree.querySelector(`input[data-kind="group"][data-group-id="${groupId}"]`);
+    if (!cb) return;
+
+    const states = group.items.map(it => visibleByUri.get(basenameUri(it.uri)) !== false);
+    const allOn = states.every(Boolean);
+    const anyOn = states.some(Boolean);
+    cb.checked = allOn;
+    cb.indeterminate = !allOn && anyOn;
+  }
+
+  function updateAllGroupStates() {
+    for (const g of LAYER_GROUPS) updateGroupCheckboxState(g.id);
+  }
+
+  function toggleGroup(groupId, visible) {
+    const group = LAYER_GROUPS.find(g => g.id === groupId);
+    if (!group) return;
+    for (const item of group.items) {
+      const uri = basenameUri(item.uri);
+      applyVisibilityToUri(uri, visible);
+      const itemCb = tree.querySelector(`input[data-kind="item"][data-uri="${uri}"]`);
+      if (itemCb) itemCb.checked = !!visible;
+    }
+    updateGroupCheckboxState(groupId);
+  }
+
+  function toggleItem(groupId, uri, visible) {
+    applyVisibilityToUri(uri, visible);
+    updateGroupCheckboxState(groupId);
+  }
+
+  function zoomToNode(node) {
+    if (!node || !viewer) return;
+
+    if (node.type === 'item') {
+      const uri = basenameUri(node.uri);
+      const tile = tileByUri.get(uri);
+      if (tile && tile.boundingSphere) flyToBoundingSphere(viewer, tile.boundingSphere);
+      else if (tileset && tileset.boundingSphere) flyToBoundingSphere(viewer, tileset.boundingSphere);
+      return;
+    }
+
+    if (node.type === 'group') {
+      const group = LAYER_GROUPS.find(g => g.id === node.groupId);
+      const sphere = group ? computeGroupSphere(group, tileByUri) : null;
+      if (sphere) flyToBoundingSphere(viewer, sphere);
+      else if (tileset && tileset.boundingSphere) flyToBoundingSphere(viewer, tileset.boundingSphere);
+    }
+  }
+
+  const ctxMenu = createLayerContextMenu((action, node) => {
+    if (!node || !node.type) return;
+
+    if (action === 'zoom') {
+      zoomToNode(node);
+      return;
+    }
+
+    if (action === 'toggle') {
+      if (node.type === 'item') {
+        const uri = basenameUri(node.uri);
+        const next = !(visibleByUri.get(uri) !== false);
+        const cb = tree.querySelector(`input[data-kind="item"][data-uri="${uri}"]`);
+        if (cb) cb.checked = next;
+        toggleItem(node.groupId, uri, next);
+      } else if (node.type === 'group') {
+        const group = LAYER_GROUPS.find(g => g.id === node.groupId);
+        if (!group) return;
+        const states = group.items.map(it => visibleByUri.get(basenameUri(it.uri)) !== false);
+        const next = !states.every(Boolean);
+        const cb = tree.querySelector(`input[data-kind="group"][data-group-id="${node.groupId}"]`);
+        if (cb) cb.checked = next;
+        toggleGroup(node.groupId, next);
+      }
+    }
+  });
+
+  for (const group of LAYER_GROUPS) {
+    const groupWrap = document.createElement('div');
+    groupWrap.className = 'layer-group';
+
+    const groupRow = document.createElement('div');
+    groupRow.className = 'layer-row group-row';
+
+    const caret = document.createElement('button');
+    caret.type = 'button';
+    caret.className = 'layer-caret expanded';
+    caret.title = 'Collapse/Expand';
+    caret.textContent = 'v';
+
+    const groupCb = document.createElement('input');
+    groupCb.type = 'checkbox';
+    groupCb.className = 'layer-checkbox';
+    groupCb.dataset.kind = 'group';
+    groupCb.dataset.groupId = group.id;
+
+    const label = document.createElement('span');
+    label.className = 'layer-label';
+    label.textContent = group.name;
+
+    groupRow.appendChild(caret);
+    groupRow.appendChild(groupCb);
+    groupRow.appendChild(label);
+
+    const children = document.createElement('div');
+    children.className = 'layer-children';
+
+    caret.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const collapsed = children.classList.toggle('collapsed');
+      caret.textContent = collapsed ? '>' : 'v';
+      caret.classList.toggle('expanded', !collapsed);
+    });
+
+    groupCb.addEventListener('change', (e) => {
+      toggleGroup(group.id, e.target.checked);
+    });
+
+    groupRow.addEventListener('click', () => {
+      selectNode({ type: 'group', groupId: group.id }, groupRow);
+    });
+    groupRow.addEventListener('dblclick', () => {
+      zoomToNode({ type: 'group', groupId: group.id });
+    });
+    groupRow.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      selectNode({ type: 'group', groupId: group.id }, groupRow);
+      ctxMenu.show(e.pageX, e.pageY, { type: 'group', groupId: group.id });
+    });
+
+    for (const item of group.items) {
+      const uri = basenameUri(item.uri);
+      const itemRow = document.createElement('div');
+      itemRow.className = 'layer-row item-row';
+
+      const spacer = document.createElement('span');
+      spacer.className = 'layer-spacer';
+      spacer.textContent = '';
+
+      const itemCb = document.createElement('input');
+      itemCb.type = 'checkbox';
+      itemCb.className = 'layer-checkbox';
+      itemCb.dataset.kind = 'item';
+      itemCb.dataset.groupId = group.id;
+      itemCb.dataset.uri = uri;
+      itemCb.checked = visibleByUri.get(uri) !== false;
+
+      const itemLabel = document.createElement('span');
+      itemLabel.className = 'layer-label';
+      itemLabel.textContent = labelFromUri(uri);
+
+      if (!tileByUri.has(uri)) {
+        itemRow.classList.add('missing');
+        itemLabel.title = 'Not found in tileset.json';
+      }
+
+      itemCb.addEventListener('change', (e) => {
+        toggleItem(group.id, uri, e.target.checked);
+      });
+
+      itemRow.addEventListener('click', () => {
+        selectNode({ type: 'item', groupId: group.id, uri }, itemRow);
+      });
+      itemRow.addEventListener('dblclick', () => {
+        zoomToNode({ type: 'item', groupId: group.id, uri });
+      });
+      itemRow.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        selectNode({ type: 'item', groupId: group.id, uri }, itemRow);
+        ctxMenu.show(e.pageX, e.pageY, { type: 'item', groupId: group.id, uri });
+      });
+
+      itemRow.appendChild(spacer);
+      itemRow.appendChild(itemCb);
+      itemRow.appendChild(itemLabel);
+      children.appendChild(itemRow);
+
+      // Apply defaults immediately
+      applyVisibilityToUri(uri, itemCb.checked);
+    }
+
+    groupWrap.appendChild(groupRow);
+    groupWrap.appendChild(children);
+    tree.appendChild(groupWrap);
+  }
+
+  updateAllGroupStates();
+
+  return {
+    getSelectedNode: () => selected.node,
+    zoomSelected: () => zoomToNode(selected.node),
+    zoomToNode,
+  };
+}
 // â”€â”€â”€ Camera Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function flyToTileset(viewer, tileset) {
@@ -284,11 +785,15 @@ function setupUI(viewer, tileset) {
 
   // Zoom to model
   document.getElementById('btn-zoom-model')?.addEventListener('click', () => {
-    if (tileset) {
-      flyToTileset(viewer, tileset);
-    } else {
-      flyToDefaultPosition(viewer);
+    // If a specific layer/group is selected, zoom there; otherwise zoom to the whole tileset.
+    const ctl = window.__layerTreeController;
+    const selected = ctl?.getSelectedNode?.();
+    if (selected && ctl?.zoomSelected) {
+      ctl.zoomSelected();
+      return;
     }
+    if (tileset) flyToTileset(viewer, tileset);
+    else flyToDefaultPosition(viewer);
   });
 
   // Toggle terrain
@@ -390,10 +895,7 @@ function setupUI(viewer, tileset) {
 function updateTilesetInfo(tileset) {
   if (!tileset) return;
 
-  const listEl = document.getElementById('tileset-list');
-  if (!listEl) return;
-
-  // Count tiles
+  // Count tiles (static tree count, not "loaded now")
   let tileCount = 0;
   function countTiles(tile) {
     tileCount++;
@@ -404,26 +906,7 @@ function updateTilesetInfo(tileset) {
   if (tileset.root) countTiles(tileset.root);
 
   document.getElementById('tile-count').textContent = tileCount;
-
-  // Tileset info
-  const bs = tileset.boundingSphere;
-  const carto = Cesium.Cartographic.fromCartesian(bs.center);
-  const lon = Cesium.Math.toDegrees(carto.longitude).toFixed(4);
-  const lat = Cesium.Math.toDegrees(carto.latitude).toFixed(4);
-
-  listEl.innerHTML = `
-    <div class="tileset-item">
-      <span class="name">ðŸ“¦ 3D Model</span>
-      <span class="badge">${tileCount} tile(s)</span>
-    </div>
-    <div class="tileset-item">
-      <span class="name">ðŸ“ ${lon}Â°, ${lat}Â°</span>
-      <span class="badge">${(bs.radius).toFixed(0)}m</span>
-    </div>
-  `;
 }
-
-
 // â”€â”€â”€ Auto-detect Tilesets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function discoverTilesets() {
@@ -466,6 +949,9 @@ async function discoverTilesets() {
       }
     }
 
+    // Setup layer tree UI (groups + visibility + zoom)
+    window.__layerTreeController = await setupLayerTree(viewer, primaryTileset);
+
     // Setup UI
     setupUI(viewer, primaryTileset);
 
@@ -493,3 +979,4 @@ async function discoverTilesets() {
     setLoadingStatus(`Fatal error: ${error.message}`);
   }
 })();
+
