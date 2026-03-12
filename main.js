@@ -458,7 +458,7 @@ function createLayerContextMenu(onAction) {
   return { show, hide };
 }
 
-async function setupLayerTree(viewer, tileset) {
+async function setupLayerTree(viewer, tileset, tilesetUrl) {
   const host = document.getElementById('tileset-list');
   if (!host) return null;
 
@@ -476,7 +476,7 @@ async function setupLayerTree(viewer, tileset) {
 
   const selected = { node: null };
 
-  const { tileByUri, uriByTile } = await buildTilesetUriIndex(tileset, CONFIG.tilesetUrl);
+  const { tileByUri, uriByTile } = await buildTilesetUriIndex(tileset, tilesetUrl || CONFIG.tilesetUrl);
 
   // Visibility state
   const visibleByUri = new Map();
@@ -940,17 +940,18 @@ async function discoverTilesets() {
     // Discover and load tilesets
     const tilesetUrls = await discoverTilesets();
     let primaryTileset = null;
+    let primaryTilesetUrl = null;
 
     for (const url of tilesetUrls) {
       setLoadingStatus(`Loading: ${url}`);
       const tileset = await loadTileset(viewer, url);
       if (tileset && !primaryTileset) {
         primaryTileset = tileset;
+        primaryTilesetUrl = url;
       }
     }
-
     // Setup layer tree UI (groups + visibility + zoom)
-    window.__layerTreeController = await setupLayerTree(viewer, primaryTileset);
+    window.__layerTreeController = await setupLayerTree(viewer, primaryTileset, primaryTilesetUrl);
 
     // Setup UI
     setupUI(viewer, primaryTileset);
@@ -979,4 +980,6 @@ async function discoverTilesets() {
     setLoadingStatus(`Fatal error: ${error.message}`);
   }
 })();
+
+
 
