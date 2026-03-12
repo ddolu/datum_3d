@@ -1,6 +1,6 @@
-/**
+﻿/**
  * ============================================================================
- *  Datum 3D — CesiumJS Viewer
+ *  Datum 3D â€” CesiumJS Viewer
  *  
  *  Open source 3D Tiles viewer. No Cesium Ion required.
  *  Loads tileset.json from /tiles/ and displays models at their 
@@ -8,10 +8,10 @@
  * ============================================================================
  */
 
-// ─── Configuration ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const CONFIG = {
-  // Tileset URL — relative to the server root
+  // Tileset URL â€” relative to the server root
   tilesetUrl: './tiles/tileset.json',
 
   // Basemap / imagery provider
@@ -20,7 +20,7 @@ const CONFIG = {
   // - esri-world-street: ArcGIS Online World Street Map
   basemap: 'esri-world-imagery', // 'esri-world-imagery', 'esri-world-street', 'osm'
 
-  // Cesium Ion access token — ONLY needed for Cesium World Terrain.
+  // Cesium Ion access token â€” ONLY needed for Cesium World Terrain.
   // Get a free token at https://cesium.com/ion/ (no payment required).
   // If you leave this empty, a simple ellipsoid (no terrain) will be used.
   cesiumIonToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4YjJkMWY0Yi1iYWY0LTQzN2YtYmRjNS1lMjI3YWNlNjg0YTIiLCJpZCI6NDAxMTY3LCJpYXQiOjE3NzMxMjQzNDN9.VCxXEJpbmru_EdzEKbyeHeyTrQ-6h-MSX_Cue5pOiI8',
@@ -35,7 +35,7 @@ const CONFIG = {
   // Default camera position (WGS84)
   // Update these to match your model's location!
   defaultCamera: {
-    longitude: 49.930,  // degrees East — Baku, Caspian Sea area
+    longitude: 49.930,  // degrees East â€” Baku, Caspian Sea area
     latitude: 40.581,   // degrees North
     height: 1500,       // meters above ground
     heading: 0,         // degrees from North
@@ -49,7 +49,7 @@ const CONFIG = {
 };
 
 
-// ─── Initialize Viewer ─────────────────────────────────────────────────────
+// â”€â”€â”€ Initialize Viewer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function setLoadingStatus(msg) {
   const el = document.getElementById('loading-status');
@@ -127,7 +127,7 @@ async function initViewer() {
 
   const viewer = new Cesium.Viewer('cesiumContainer', {
     terrainProvider: terrainProvider,
-    baseLayerPicker: false,
+    baseLayerPicker: true,
     geocoder: false,
     homeButton: true,
     sceneModePicker: false,
@@ -140,9 +140,7 @@ async function initViewer() {
     selectionIndicator: true,
     shadows: CONFIG.enableShadows,
     shouldAnimate: true,
-
-    imageryProvider: imageryProvider,
-  });
+});
 
   // Scene settings
   const scene = viewer.scene;
@@ -166,7 +164,7 @@ async function initViewer() {
 }
 
 
-// ─── Load 3D Tiles ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Load 3D Tiles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function loadTileset(viewer, url) {
   setLoadingStatus('Loading 3D Tiles...');
@@ -218,7 +216,7 @@ async function loadTileset(viewer, url) {
 }
 
 
-// ─── Camera Controls ────────────────────────────────────────────────────────
+// â”€â”€â”€ Camera Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function flyToTileset(viewer, tileset) {
   if (!tileset) return;
@@ -247,7 +245,7 @@ function flyToDefaultPosition(viewer) {
 }
 
 
-// ─── Height Offset ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Height Offset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function applyHeightOffset(tileset, offsetMeters) {
   if (!tileset) return;
@@ -273,7 +271,7 @@ function applyHeightOffset(tileset, offsetMeters) {
 }
 
 
-// ─── UI Updates ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ UI Updates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function setupUI(viewer, tileset) {
   // Panel toggle
@@ -359,7 +357,7 @@ function setupUI(viewer, tileset) {
       document.getElementById('camera-height').textContent =
         h > 10000 ? `${(h / 1000).toFixed(1)} km` : `${h.toFixed(0)} m`;
       document.getElementById('camera-position').textContent =
-        `${Cesium.Math.toDegrees(carto.longitude).toFixed(4)}°, ${Cesium.Math.toDegrees(carto.latitude).toFixed(4)}°`;
+        `${Cesium.Math.toDegrees(carto.longitude).toFixed(4)}Â°, ${Cesium.Math.toDegrees(carto.latitude).toFixed(4)}Â°`;
     }
   });
 
@@ -372,8 +370,8 @@ function setupUI(viewer, tileset) {
     if (cartesian) {
       const carto = Cesium.Cartographic.fromCartesian(cartesian);
       document.getElementById('mouse-coords').textContent =
-        `Lon: ${Cesium.Math.toDegrees(carto.longitude).toFixed(6)}°  ` +
-        `Lat: ${Cesium.Math.toDegrees(carto.latitude).toFixed(6)}°  ` +
+        `Lon: ${Cesium.Math.toDegrees(carto.longitude).toFixed(6)}Â°  ` +
+        `Lat: ${Cesium.Math.toDegrees(carto.latitude).toFixed(6)}Â°  ` +
         `H: ${carto.height.toFixed(1)}m`;
     }
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -415,18 +413,18 @@ function updateTilesetInfo(tileset) {
 
   listEl.innerHTML = `
     <div class="tileset-item">
-      <span class="name">📦 3D Model</span>
+      <span class="name">ðŸ“¦ 3D Model</span>
       <span class="badge">${tileCount} tile(s)</span>
     </div>
     <div class="tileset-item">
-      <span class="name">📍 ${lon}°, ${lat}°</span>
+      <span class="name">ðŸ“ ${lon}Â°, ${lat}Â°</span>
       <span class="badge">${(bs.radius).toFixed(0)}m</span>
     </div>
   `;
 }
 
 
-// ─── Auto-detect Tilesets ───────────────────────────────────────────────────
+// â”€â”€â”€ Auto-detect Tilesets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 async function discoverTilesets() {
   /**
@@ -449,7 +447,7 @@ async function discoverTilesets() {
 }
 
 
-// ─── Main Entry Point ───────────────────────────────────────────────────────
+// â”€â”€â”€ Main Entry Point â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 (async function main() {
   try {
@@ -476,7 +474,7 @@ async function discoverTilesets() {
       updateTilesetInfo(primaryTileset);
       flyToTileset(viewer, primaryTileset);
     } else {
-      // No tileset — fly to default position
+      // No tileset â€” fly to default position
       flyToDefaultPosition(viewer);
     }
 
