@@ -14,6 +14,12 @@ const CONFIG = {
   // Tileset URL — relative to the server root
   tilesetUrl: './tiles/tileset.json',
 
+  // Basemap / imagery provider
+  // - osm: OpenStreetMap raster tiles
+  // - esri-world-imagery: ArcGIS Online World Imagery (satellite)
+  // - esri-world-street: ArcGIS Online World Street Map
+  basemap: 'esri-world-imagery', // 'esri-world-imagery', 'esri-world-street', 'osm'
+
   // Cesium Ion access token — ONLY needed for Cesium World Terrain.
   // Get a free token at https://cesium.com/ion/ (no payment required).
   // If you leave this empty, a simple ellipsoid (no terrain) will be used.
@@ -48,6 +54,27 @@ const CONFIG = {
 function setLoadingStatus(msg) {
   const el = document.getElementById('loading-status');
   if (el) el.textContent = msg;
+}
+
+async function createBasemapProvider() {
+  if (CONFIG.basemap === 'esri-world-imagery' || CONFIG.basemap === 'esri-world-street') {
+    const url = (CONFIG.basemap === 'esri-world-imagery')
+      ? 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
+      : 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer';
+
+    if (Cesium.ArcGisMapServerImageryProvider && typeof Cesium.ArcGisMapServerImageryProvider.fromUrl === 'function') {
+      return Cesium.ArcGisMapServerImageryProvider.fromUrl(url);
+    }
+    if (Cesium.ArcGisMapServerImageryProvider) {
+      return new Cesium.ArcGisMapServerImageryProvider({ url });
+    }
+    throw new Error('ArcGisMapServerImageryProvider is not available in this CesiumJS build');
+  }
+
+  // Default: OpenStreetMap (no API keys needed)
+  return new Cesium.OpenStreetMapImageryProvider({
+    url: 'https://tile.openstreetmap.org/',
+  });
 }
 
 async function initViewer() {
@@ -86,9 +113,21 @@ async function initViewer() {
   // Create viewer
   setLoadingStatus('Creating 3D viewer...');
 
+  // Imagery / basemap
+  let imageryProvider;
+  try {
+    imageryProvider = await createBasemapProvider();
+  } catch (e) {
+    console.warn('Basemap failed, falling back to OpenStreetMap:', e);
+    imageryProvider = new Cesium.OpenStreetMapImageryProvider({
+      url: 'https://tile.openstreetmap.org/',
+    });
+  }
+
+
   const viewer = new Cesium.Viewer('cesiumContainer', {
     terrainProvider: terrainProvider,
-    baseLayerPicker: true,
+    baseLayerPicker: false,
     geocoder: false,
     homeButton: true,
     sceneModePicker: false,
@@ -102,10 +141,7 @@ async function initViewer() {
     shadows: CONFIG.enableShadows,
     shouldAnimate: true,
 
-    // Use OpenStreetMap as default imagery (free, no token)
-    imageryProvider: new Cesium.OpenStreetMapImageryProvider({
-      url: 'https://tile.openstreetmap.org/',
-    }),
+    imageryProvider: imageryProvider,
   });
 
   // Scene settings
